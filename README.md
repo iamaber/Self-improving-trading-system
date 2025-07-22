@@ -1,138 +1,121 @@
-Stock Price Predictor (LSTM-based)
-This project provides a web-based application for predicting stock prices using a Long Short-Term Memory (LSTM) neural network. It allows users to visualize historical stock data, see the model's performance on past data, forecast future prices, and analyze market trends through various interactive charts. The model is designed to be easily fine-tuned with new data to keep its predictions up-to-date.
+# Stock Price Predictor (LSTM-based)
 
-🚀 Features
-Historical Data Visualization: View interactive charts of past stock prices.
+This project is a web-based application for predicting stock prices using a Long Short-Term Memory (LSTM) neural network. It enables users to visualize historical stock data, evaluate model performance, forecast future prices, and analyze market trends through interactive charts. The model can be easily fine-tuned with new data to keep predictions up-to-date.
 
-LSTM Model Training/Fine-tuning: Train or fine-tune an LSTM model using historical and newly fetched data. The model is trained on the 'Close' price only.
+---
 
-Historical Prediction Performance: See how well the model predicts past stock prices (Actual vs. Predicted) to gauge its accuracy.
+## 🚀 Features
 
-Error Metrics: Quantifiable metrics (RMSE, MAE) and a distribution plot of prediction errors on historical data.
+- **Historical Data Visualization:** Interactive charts of past stock prices.
+- **LSTM Model Training/Fine-tuning:** Train or fine-tune an LSTM model using historical and newly fetched data (trained on the 'Close' price).
+- **Historical Prediction Performance:** Compare actual vs. predicted prices to assess model accuracy.
+- **Error Metrics:** View RMSE, MAE, and a distribution plot of prediction errors.
+- **Future Price Forecasting:** Forecast future stock prices for various horizons (e.g., 7, 15, 30, 60, 90, 120, 180 days).
+- **Real-time Data Fetching:** Automatically fetches the latest stock data from Yahoo Finance.
+- **Market Analysis Charts:**
+    - Daily Trading Volume
+    - Close Price with Moving Averages (50-day, 200-day)
+    - Daily Returns Distribution
+- **Interactive Streamlit Dashboard:** User-friendly interface built with Streamlit.
 
-Future Price Forecasting: Generate forecasts for future stock prices for various horizons (e.g., 7, 15, 30, 60, 90, 120, 180 days).
+---
 
-Real-time Data Fetching: Automatically fetches the latest stock data from Yahoo Finance for fine-tuning and analysis.
+## 🛠️ Technologies Used
 
-Market Analysis Charts:
+- Python 3.x
+- PyTorch (LSTM model)
+- Pandas (data manipulation)
+- Scikit-learn (MinMaxScaler)
+- yfinance (data fetching)
+- Streamlit (web app)
+- Plotly (visualizations)
+- NumPy (numerical operations)
 
-Daily Trading Volume.
+---
 
-Close Price with Moving Averages (50-day, 200-day).
+## 📂 Project Structure
 
-Daily Returns Distribution.
-
-Interactive Streamlit Dashboard: User-friendly interface built with Streamlit.
-
-🛠️ Technologies Used
-Python 3.x
-
-PyTorch: For building and training the LSTM model.
-
-Pandas: For data manipulation and analysis.
-
-Scikit-learn: For data preprocessing (MinMaxScaler).
-
-yfinance: For fetching historical stock market data.
-
-Streamlit: For creating the interactive web application.
-
-Plotly: For interactive data visualizations.
-
-NumPy: For numerical operations.
-
-📂 Project Structure
+```
 stock_predictor/
 ├── data_fetcher.py
 ├── model.py
 ├── predict.py
 ├── train.py
-├── streamlit_app.py
+├── app.py
 ├── google_stock_prices_2015_2024.csv
-├── best_stock_model.pth           # Included: Pre-trained model weights
-└── scaler.pkl                     # Included: Pre-fitted data scaler
+├── best_stock_model.pth           # Pre-trained model weights
+└── scaler.pkl                     # Pre-fitted data scaler
+```
 
-data_fetcher.py: Handles fetching historical stock data from Yahoo Finance and standardizing its format.
+- **data_fetcher.py:** Fetches and standardizes historical stock data from Yahoo Finance.
+- **model.py:** Defines the LSTM neural network (StockLSTM).
+- **predict.py:** Loads the trained model and scaler, and makes predictions.
+- **train.py:** Trains or fine-tunes the LSTM model and saves the model and scaler.
+- **streamlit_app.py:** Main Streamlit dashboard integrating all components.
+- **google_stock_prices_2015_2024.csv:** Initial dataset (GOOGL) for model training.
+- **best_stock_model.pth:** Pre-trained LSTM model weights.
+- **scaler.pkl:** Pre-fitted MinMaxScaler for preprocessing.
 
-model.py: Defines the LSTM neural network architecture (StockLSTM).
+---
 
-predict.py: Contains functions for loading the trained model and scaler, and making future stock price predictions.
+## ⚙️ Setup Instructions
 
-train.py: Script for training (or fine-tuning) the LSTM model and saving the trained model (best_stock_model.pth) and the data scaler (scaler.pkl).
+1. **Clone the Repository**
+     ```bash
+     git clone <repository_url>
+     cd stock_predictor
+     ```
 
-streamlit_app.py: The main Streamlit application script that integrates all components for the web dashboard.
+2. **Create a Virtual Environment (Recommended)**
+     ```bash
+     python3 -m venv .venv
+     source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+     ```
 
-google_stock_prices_2015_2024.csv: An initial dataset of Google stock prices (GOOGL) used for initial model training.
+3. **Install Dependencies**
+     ```bash
+     pip install -r requirements.txt
+     ```
+     If `requirements.txt` is missing, create one with:
+     ```
+     torch
+     pandas
+     scikit-learn
+     yfinance
+     streamlit
+     plotly
+     numpy
+     ```
 
-best_stock_model.pth: The pre-trained weights of the LSTM model.
+4. **Data and Pre-trained Model Setup**
+     - The repository includes `google_stock_prices_2015_2024.csv`, `best_stock_model.pth`, and `scaler.pkl`. These are ready for use, so you can skip initial training if you want to use the provided model.
 
-scaler.pkl: The pre-fitted MinMaxScaler used for data preprocessing.
+5. **(Optional) Train/Fine-tune the LSTM Model**
+     - To train or fine-tune with the latest data:
+         ```bash
+         python train.py
+         ```
+     - This will:
+         - Load `google_stock_prices_2015_2024.csv`
+         - Fetch new GOOGL data from 2025-01-01 to present
+         - Combine datasets and train/fine-tune the model
+         - Save updated `best_stock_model.pth` and `scaler.pkl`
 
-⚙️ Setup Instructions
-Follow these steps to get the project up and running on your local machine.
+6. **Run the Streamlit Application**
+     ```bash
+     streamlit run streamlit_app.py
+     ```
+     - This opens the app in your web browser.
 
-1. Clone the Repository
-git clone <repository_url> # Replace <repository_url> with your actual repository URL
-cd stock_predictor
+---
 
-2. Create a Virtual Environment (Recommended)
-python3 -m venv .venv
-source .venv/bin/activate # On Windows: .venv\Scripts\activate
+## 🚀 Usage
 
-3. Install Dependencies
-pip install -r requirements.txt
+- **Select Forecast Horizon:** Use the sidebar slider to choose how many days into the future to predict (e.g., 7, 30, 60, 90 days).
+- **Fine-tune Model:** Click "Fine-tune Model with Latest Data" in the sidebar to update the model with recent stock data.
+- **Navigate Tabs:**
+    - **Forecast & Performance:** View future price forecasts, historical performance (Actual vs. Predicted), and error metrics (RMSE, MAE).
+    - **Market Analysis:** Explore charts like Trading Volume, Moving Averages, and Daily Returns Distribution.
+    - **Raw Data:** Inspect the raw historical data and the full dataset used for analysis.
 
-If you don't have a requirements.txt file, create one and add the following, then run pip install -r requirements.txt:
-
-torch
-pandas
-scikit-learn
-yfinance
-streamlit
-plotly
-numpy
-
-4. Data and Pre-trained Model Setup
-The repository includes the google_stock_prices_2015_2024.csv dataset, the best_stock_model.pth (pre-trained model weights), and scaler.pkl (pre-fitted data scaler). These files are ready for use, so you can skip the initial training step if you wish to use the provided model.
-
-If you want to re-train or fine-tune the model with the latest data, proceed to step 5.
-
-5. (Optional) Train/Fine-tune the LSTM Model
-If you want to train the model from scratch or fine-tune it with the very latest data, run this script:
-
-python train.py
-
-This script will:
-
-Load the google_stock_prices_2015_2024.csv data.
-
-Fetch any new data for GOOGL from 2025-01-01 to the current date.
-
-Combine the historical and new data.
-
-Train/fine-tune the StockLSTM model on the 'Close' price feature of this combined dataset.
-
-Save the updated best_stock_model.pth and scaler.pkl files, overwriting the included ones.
-
-6. Run the Streamlit Application
-Once the necessary files (.pth, .pkl) are present (either from the repository or generated by train.py), you can launch the interactive web application:
-
-streamlit run streamlit_app.py
-
-This command will open the Streamlit app in your web browser.
-
-🚀 Usage
-Once the Streamlit app is running:
-
-Select Forecast Horizon: Use the slider in the sidebar to choose how many days into the future you want to predict (e.g., 7, 30, 60, 90 etc. days).
-
-Fine-tune Model: Click the "Fine-tune Model with Latest Data" button in the sidebar to update the model with the most recent stock data available. This is useful for keeping your predictions current.
-
-Navigate Tabs:
-
-Forecast & Performance: View the future price forecast, the model's historical performance (Actual vs. Predicted), and quantitative error metrics (RMSE, MAE) along with an error distribution.
-
-Market Analysis: Explore additional charts like Trading Volume, Moving Averages, and Daily Returns Distribution for deeper market insights.
-
-Raw Data: Inspect the raw historical data used by the model and the full dataset used for analysis.
-
+---
