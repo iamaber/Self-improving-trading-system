@@ -112,7 +112,7 @@ st.title(f"Stock Price Prediction & Analysis for {TICKER_SYMBOL}")
 # Sidebar for controls
 st.sidebar.header("Settings")
 forecast_horizon = st.sidebar.select_slider(
-    "Select Forecast Horizon (days)", options=[7, 15, 30, 60], value=7
+    "Select Forecast Horizon (days)", options=[7, 15, 30, 60, 90, 180, 360], value=7
 )
 
 # On-demand fine-tuning button (for demonstration)
