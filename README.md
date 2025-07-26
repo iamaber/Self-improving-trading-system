@@ -1,4 +1,4 @@
-# Stock Price Predictor (LSTM-based)
+# Self Improving Trading System(LSTM-based)
 
 This project is a web-based application for predicting stock prices using a Long Short-Term Memory (LSTM) neural network. It enables users to visualize historical stock data, evaluate model performance, forecast future prices, and analyze market trends through interactive charts. The model can be easily fine-tuned with new data to keep predictions up-to-date.
 
