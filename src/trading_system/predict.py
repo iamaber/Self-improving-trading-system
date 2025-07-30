@@ -4,27 +4,31 @@ import pandas as pd
 import pickle
 import os
 from datetime import datetime, timedelta
+from pathlib import Path
 
-from model import StockLSTM, device
+from .model import StockLSTM, device
+
+# Get project root directory
+project_root = Path(__file__).parent.parent.parent
 
 LOOK_BACK = 60
-MODEL_PATH = "best_stock_model.pth"
-SCALER_PATH = "scaler.pkl"
+MODEL_PATH = project_root / "models" / "best_stock_model.pth"
+SCALER_PATH = project_root / "models" / "scaler.pkl"
 
 def load_model_and_scaler():
-    if not os.path.exists(MODEL_PATH):
+    if not os.path.exists(str(MODEL_PATH)):
         raise FileNotFoundError(f"Model file not found at {MODEL_PATH}. Please train the model first.")
-    if not os.path.exists(SCALER_PATH):
+    if not os.path.exists(str(SCALER_PATH)):
         raise FileNotFoundError(f"Scaler file not found at {SCALER_PATH}. Please ensure it was saved during training.")
 
-    with open(SCALER_PATH, 'rb') as f:
+    with open(str(SCALER_PATH), 'rb') as f:
         scaler = pickle.load(f)
 
     # input_size will be 1 as the scaler was fitted on a single feature
     input_size = scaler.scale_.shape[0]
 
     model = StockLSTM(input_size=input_size, hidden_size=64, num_layers=2, output_size=1, dropout=0.2).to(device)
-    model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
+    model.load_state_dict(torch.load(str(MODEL_PATH), map_location=device))
     model.eval()
     return model, scaler
 

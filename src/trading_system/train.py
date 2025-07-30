@@ -1,6 +1,7 @@
 import os
 import pickle
 from datetime import datetime, timedelta
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -9,13 +10,16 @@ import torch.nn as nn
 from sklearn.preprocessing import MinMaxScaler
 from torch.utils.data import DataLoader, TensorDataset
 
-from data_fetcher import fetch_stock_data
-from model import StockLSTM, device
+from .data_fetcher import fetch_stock_data
+from .model import StockLSTM, device
+
+# Get project root directory
+project_root = Path(__file__).parent.parent.parent
 
 LOOK_BACK = 60
-MODEL_PATH = "best_stock_model.pth"
-SCALER_PATH = "scaler.pkl"
-ORIGINAL_DATA_PATH = "google_stock_prices_2015_2024.csv"
+MODEL_PATH = project_root / "models" / "best_stock_model.pth"
+SCALER_PATH = project_root / "models" / "scaler.pkl"
+ORIGINAL_DATA_PATH = project_root / "data" / "raw" / "google_stock_prices_2015_2024.csv"
 
 
 def create_sequences(data, look_back):
@@ -40,7 +44,7 @@ def train_model(model, train_loader, criterion, optimizer, epochs=100):
 
 def prepare_data_and_train(new_data_df=None):
     original_df = pd.read_csv(
-        ORIGINAL_DATA_PATH, parse_dates=["Date"], index_col="Date"
+        str(ORIGINAL_DATA_PATH), parse_dates=["Date"], index_col="Date"
     )
     original_df = original_df[["Close"]]
 
@@ -57,7 +61,7 @@ def prepare_data_and_train(new_data_df=None):
     scaler = MinMaxScaler(feature_range=(0, 1))
     scaled_data = scaler.fit_transform(combined_df)
 
-    with open(SCALER_PATH, "wb") as f:
+    with open(str(SCALER_PATH), "wb") as f:
         pickle.dump(scaler, f)
 
     X, y = create_sequences(scaled_data, LOOK_BACK)
@@ -73,9 +77,9 @@ def prepare_data_and_train(new_data_df=None):
         input_size=input_size, hidden_size=64, num_layers=2, output_size=1, dropout=0.2
     ).to(device)
 
-    if os.path.exists(MODEL_PATH):
+    if os.path.exists(str(MODEL_PATH)):
         print(f"Loading existing model from {MODEL_PATH}")
-        model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
+        model.load_state_dict(torch.load(str(MODEL_PATH), map_location=device))
         print("Model loaded successfully.")
     else:
         print("No existing model found. Training a new model.")
@@ -86,13 +90,13 @@ def prepare_data_and_train(new_data_df=None):
     print("Starting model training/fine-tuning...")
     train_model(model, train_loader, criterion, optimizer, epochs=10)
 
-    torch.save(model.state_dict(), MODEL_PATH)
+    torch.save(model.state_dict(), str(MODEL_PATH))
     print(f"Model saved to {MODEL_PATH}")
 
 
 if __name__ == "__main__":
     ticker_symbol = "GOOGL"
-    original_df_temp = pd.read_csv(ORIGINAL_DATA_PATH, parse_dates=["Date"])
+    original_df_temp = pd.read_csv(str(ORIGINAL_DATA_PATH), parse_dates=["Date"])
     last_original_date = original_df_temp["Date"].max()
 
     start_date_new_data = (last_original_date + timedelta(days=1)).strftime("%Y-%m-%d")
