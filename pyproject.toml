@@ -1,9 +1,10 @@
 [project]
 name = "self-improving-trading-system"
 version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
+description = "A self-improving LSTM-based stock trading system with real-time predictions and model fine-tuning capabilities"
 requires-python = ">=3.11"
+license = {text = "MIT"}
+keywords = ["trading", "lstm", "machine-learning", "stocks", "prediction"]
 dependencies = [
     "matplotlib>=3.10.3",
     "numpy>=2.3.1",

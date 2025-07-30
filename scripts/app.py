@@ -1,3 +1,12 @@
+import sys
+import os
+from pathlib import Path
+
+# Add the src directory to Python path for imports
+project_root = Path(__file__).parent.parent
+src_path = project_root / "src"
+sys.path.insert(0, str(src_path))
+
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -6,19 +15,17 @@ from datetime import datetime, timedelta
 import torch
 from sklearn.metrics import mean_squared_error, mean_absolute_error  # For error metrics
 
-from data_fetcher import fetch_stock_data
-from predict import load_model_and_scaler, predict_future
-from train import prepare_data_and_train
-from model import device
+from trading_system.data_fetcher import fetch_stock_data
+from trading_system.predict import load_model_and_scaler, predict_future
+from trading_system.train import prepare_data_and_train
+from trading_system.model import device
 
 # --- Configuration ---
 TICKER_SYMBOL = "GOOGL"
-ORIGINAL_DATA_PATH = "google_stock_prices_2015_2024.csv"
-MODEL_PATH = "best_stock_model.pth"
-SCALER_PATH = "scaler.pkl"
+ORIGINAL_DATA_PATH = project_root / "data" / "raw" / "google_stock_prices_2015_2024.csv"
+MODEL_PATH = project_root / "models" / "best_stock_model.pth"
+SCALER_PATH = project_root / "models" / "scaler.pkl"
 LOOK_BACK = 60  # Needs to be consistent with model training
-
-st.set_page_config(layout="wide", page_title="Stock Price Predictor")
 
 
 @st.cache_resource
@@ -40,7 +47,7 @@ def get_historical_data():
     """Loads original data and fetches new data, then combines.
     Returns only the 'Close' column as the model is trained on a single feature."""
     original_df = pd.read_csv(
-        ORIGINAL_DATA_PATH, parse_dates=["Date"], index_col="Date"
+        str(ORIGINAL_DATA_PATH), parse_dates=["Date"], index_col="Date"
     )
     original_df = original_df[["Close"]]
 
@@ -297,7 +304,7 @@ if model is not None and scaler is not None and not historical_df.empty:
         @st.cache_data(ttl=timedelta(hours=1))
         def get_full_historical_data_for_analysis():
             full_original_df = pd.read_csv(
-                ORIGINAL_DATA_PATH, parse_dates=["Date"], index_col="Date"
+                str(ORIGINAL_DATA_PATH), parse_dates=["Date"], index_col="Date"
             )
             # Ensure these columns exist, data_fetcher should handle it
             full_original_df = full_original_df[
@@ -418,3 +425,13 @@ else:
     st.info(
         "Model, scaler, or historical data not loaded. Please ensure the model is trained and data is available."
     )
+
+
+def main():
+    """Main entry point for the Streamlit application."""
+    st.set_page_config(layout="wide", page_title="Stock Price Predictor")
+    # The rest of the app logic is already defined above
+
+
+if __name__ == "__main__":
+    main()
